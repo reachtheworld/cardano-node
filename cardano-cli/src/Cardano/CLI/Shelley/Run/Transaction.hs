@@ -357,7 +357,6 @@ runTxBuildRaw (AnyCardanoEra era)
                  <*> validateTxValidityUpperBound era mUpperBound)
         <*> validateTxMetadataInEra  era metadataSchema metadataFiles
         <*> validateTxAuxScripts     era scriptFiles
-        <*> pure (BuildTxWith TxExtraScriptDataNone) --TODO alonzo: support this
         <*> validateRequiredSigners  era reqSigners
         <*> validateProtocolParameters era mpparams
         <*> validateTxWithdrawals    era withdrawals
@@ -429,7 +428,6 @@ runTxBuild (AnyCardanoEra era) (AnyConsensusModeParams cModeParams) networkId mS
                    <*> validateTxValidityUpperBound era mUpperBound)
           <*> validateTxMetadataInEra     era metadataSchema metadataFiles
           <*> validateTxAuxScripts        era scriptFiles
-          <*> pure (BuildTxWith TxExtraScriptDataNone) --TODO alonzo: support this
           <*> validateRequiredSigners     era reqSigners
           <*> validateProtocolParameters  era mpparams
           <*> validateTxWithdrawals       era withdrawals
