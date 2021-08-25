@@ -7,14 +7,15 @@ module Cardano.CLI.Shelley.Output
   , QueryTipLocalStateOutput(..)
   ) where
 
-import           Cardano.Api (AnyCardanoEra, ChainTip (..), EpochNo, serialiseToRawBytesHexText, EraHistory (..), CardanoMode)
+import           Cardano.Api
+
 import           Cardano.CLI.Shelley.Orphans ()
-import           Cardano.Prelude (Text)
-import           Cardano.Slotting.Block (BlockNo (..))
+import           Cardano.Prelude (Either, Text)
+import           Cardano.Slotting.EpochInfo (EpochInfo)
 import           Cardano.Slotting.Time (SystemStart (..))
 import           Control.Monad
 import           Data.Aeson (KeyValue, ToJSON (..), (.=))
-import           Data.Function (($), (.), id)
+import           Data.Function (id, ($), (.))
 import           Data.Maybe
 import           Data.Monoid (mconcat)
 import           Shelley.Spec.Ledger.Scripts ()
@@ -31,12 +32,14 @@ data QueryTipLocalState = QueryTipLocalState
   { era :: AnyCardanoEra
   , eraHistory :: EraHistory CardanoMode
   , mSystemStart :: Maybe SystemStart
+  , epochInfo :: EpochInfo (Either TransactionValidityIntervalError)
   }
 
 data QueryTipLocalStateOutput = QueryTipLocalStateOutput
   { mEra :: Maybe AnyCardanoEra
   , mEpoch :: Maybe EpochNo
   , mSyncProgress :: Maybe Text
+  , mSystemStartOut :: Maybe SystemStart
   }
 
 -- | A key-value pair difference list for encoding a JSON object.
@@ -60,6 +63,7 @@ instance ToJSON (QueryTipOutput QueryTipLocalStateOutput) where
         . ("era" ..=? (mLocalState a >>= mEra))
         . ("epoch" ..=? (mLocalState a >>= mEpoch))
         . ("syncProgress" ..=? (mLocalState a >>= mSyncProgress))
+        . ("systemStart" ..=? (mLocalState a >>= mSystemStartOut))
         ) []
   toEncoding a = case chainTip a of
     ChainTipAtGenesis -> JE.null_
