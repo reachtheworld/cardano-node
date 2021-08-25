@@ -8,6 +8,7 @@
 module Gen.Cardano.Api.Typed
   ( genAddressByron
   , genAddressShelley
+  , genCertificate
   , genMaybePraosNonce
   , genPraosNonce
   , genProtocolParameters
@@ -18,6 +19,7 @@ module Gen.Cardano.Api.Typed
   , genTxId
   , genTxIn
   , genTxOut
+  , genUTxO
 
     -- * Scripts
   , genScript
@@ -38,6 +40,7 @@ module Gen.Cardano.Api.Typed
   , genValue
   , genValueDefault
   , genVerificationKey
+  , genVerificationKeyHash
   , genUpdateProposal
   , genProtocolParametersUpdate
   , genScriptDataSupportedInAlonzoEra
@@ -387,6 +390,10 @@ genTxOut era =
         <*> genTxOutValue era
         <*> genTxOutDatumHash era
 
+genUTxO :: CardanoEra era -> Gen (UTxO era)
+genUTxO era =
+  UTxO <$> Gen.map (Range.constant 0 5) ((,) <$> genTxIn <*> genTxOut era)
+
 genTtl :: Gen SlotNo
 genTtl = genSlotNo
 
@@ -453,12 +460,21 @@ genTxCertificates :: CardanoEra era -> Gen (TxCertificates BuildTx era)
 genTxCertificates era =
   case certificatesSupportedInEra era of
     Nothing -> pure TxCertificatesNone
-    Just supported ->
+    Just supported -> do
+      certs <- Gen.list (Range.constant 0 3) genCertificate
       Gen.choice
         [ pure TxCertificatesNone
-        , pure (TxCertificates supported mempty $ BuildTxWith mempty)
+        , pure (TxCertificates supported certs $ BuildTxWith mempty)
           -- TODO: Generate certificates
         ]
+
+-- TODO: Add remaining certificates
+genCertificate :: Gen Certificate
+genCertificate =
+  Gen.choice
+    [ StakeAddressRegistrationCertificate <$> genStakeCredential
+    , StakeAddressDeregistrationCertificate <$> genStakeCredential
+    ]
 
 genTxUpdateProposal :: CardanoEra era -> Gen (TxUpdateProposal era)
 genTxUpdateProposal era =
