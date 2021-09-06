@@ -634,7 +634,7 @@ cdfCounter v !size !step tCdf= do
     when (v < lim) $
         STM.modifyTVar' tCdf (\(CdfCounter c) -> CdfCounter $ c + step)
 
-    (CdfCounter cdf) <- STM.readTVar tCdf
+    CdfCounter cdf <- STM.readTVar tCdf
     return $! fromIntegral cdf / fromIntegral size
 
   where
