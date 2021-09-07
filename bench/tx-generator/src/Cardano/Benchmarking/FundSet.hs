@@ -234,7 +234,11 @@ selectToBuffer ::
   -> Either String [Fund]
 selectToBuffer count minValue variant fs
   = if length coins < count
-    then Left "selectToBuffer: not enough coins found"
+    then Left $ concat
+      [ "selectToBuffer: not enough coins found: count: ", show count
+      , "minValue: ", show minValue
+      , "variant: ", show variant
+      ]
     else Right coins
  where
   coins = take count $ toAscList ( Proxy :: Proxy Lovelace) (fs @=variant @= IsConfirmed @>= minValue)

@@ -323,15 +323,21 @@ runBenchmarkInEra (ThreadName threadName) txCount tps era = do
   metadata <- makeMetadata
   connectClient <- getConnectClient
   let
-    minTxValue :: Lovelace
-    minTxValue = fromIntegral numOutputs * minValuePerUTxO + fee
+--    minValue :: Lovelace
+    (Quantity minValue) = lovelaceToQuantity $ fromIntegral numOutputs * minValuePerUTxO + fee
+
+  -- this is not totally correct:
+  -- beware of rounding errors !
+    minValuePerInput = quantityToLovelace $ fromIntegral (if m==0 then d else d+1)
+      where
+        (d, m) = (minValue `divMod` fromIntegral numInputs)
 
 --    fundSource :: FundSet.Target -> FundSet.FundSource
 --    fundSource target = mkWalletFundSource walletRef $ FundSet.selectInputs ConfirmedBeforeReuse numInputs minTxValue PlainOldFund target
 
   fundSource <- liftIO (mkBufferedSource walletRef
                    (fromIntegral (unNumberOfTxs txCount) * numInputs)
-                   minTxValue  -- This is an approximation
+                   minValuePerInput
                    PlainOldFund numInputs) >>= \case
     Right a  -> return a
     Left err -> throwE $ WalletError err
