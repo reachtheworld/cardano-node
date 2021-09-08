@@ -169,7 +169,7 @@ genScriptData =
     genInteger :: Gen Integer
     genInteger = Gen.integral
                   (Range.linear
-                    (fromIntegral (minBound :: Word64) :: Integer)
+                    (-fromIntegral (maxBound :: Word64) :: Integer)
                     (fromIntegral (maxBound :: Word64) :: Integer))
 
     genByteString :: Gen ByteString
