@@ -41,6 +41,17 @@ def genesis_profile_variants:
     , generator: { tps: 128 } }
   , { genesis: { utxo: 2000000, delegators:  500000, max_block_size: 2048000 }
     , generator: { tps: 256 } }
+
+
+  ## Proxy:
+  , { composition:
+      { locations:                      ["LO"]
+      , n_bft_hosts:                    0
+      , n_singular_hosts:               0
+      , n_dense_hosts:                  0
+      , with_proxy:                     true
+      , with_observer:                  true
+      } }
   ];
 
 def generator_profile_variants:

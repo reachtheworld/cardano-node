@@ -111,7 +111,8 @@ case "$op" in
         local tag=${1:?$usage}
         local dir=$(run get "$tag")
 
-        rm -f      "$global_rundir"/current
+        rm -f      "$global_rundir"/{current,-current}
+        ln -s $tag "$global_rundir"/-current
         ln -s $tag "$global_rundir"/current;;
 
     current-run-path | current-path | path )

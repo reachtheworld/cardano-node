@@ -13,6 +13,7 @@ def era_defaults($era):
     , n_singular_hosts:               1
     , n_dense_hosts:                  1
     , dense_pool_density:             1
+    , with_proxy:                     false
     , with_observer:                  true
     }
 

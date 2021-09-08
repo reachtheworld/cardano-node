@@ -98,6 +98,7 @@ case "${op}" in
            | del(.era)
            | del(.genesis_future_offset)
            | del(.locations)
+           | del(.with_proxy)
            | del(.with_observer)
            ' ${args[*]};;
 

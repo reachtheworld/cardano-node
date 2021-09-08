@@ -144,6 +144,21 @@ case "${op}" in
 
             loopback_node_topology_from_nixops_topology($topology[0]; $i)
             ' "${args[@]}";;
+        local-proxy )
+            args=(--argjson   basePort $basePort
+                  --null-input
+                 )
+            jq '
+            def proxy_topology:
+              { Producers:
+                 [{ addr:    "relays-new.cardano-mainnet.iohk.io"
+                  , port:    3001
+                  , valency: 1
+                  }]
+              };
+
+            proxy_topology
+            ' "${args[@]}";;
         local-observer )
             args=(--slurpfile topology "$topo_dir"/topology-nixops.json
                   --argjson   basePort $basePort
