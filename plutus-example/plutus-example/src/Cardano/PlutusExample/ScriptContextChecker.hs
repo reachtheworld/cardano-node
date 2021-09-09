@@ -23,7 +23,6 @@ import qualified Cardano.Api.Shelley as Api
 
 import           Codec.Serialise
 import           Control.Monad.IO.Class (liftIO)
-import           Control.Monad.Trans.Except (ExceptT (..))
 import           Control.Monad.Trans.Except.Extra
 import qualified Data.Aeson as Aeson
 import           Data.Bifunctor (first)
@@ -36,17 +35,18 @@ import qualified Data.Set as Set
 import           System.FilePath.Posix
 
 import           Cardano.CLI.Environment
-import           Cardano.CLI.Shelley.Output
 import           Cardano.CLI.Shelley.Run.Query
 import           Cardano.CLI.Types (SocketPath (..))
 import qualified Cardano.Ledger.Alonzo.Tx as Alonzo
 import qualified Cardano.Ledger.Alonzo.TxInfo as Alonzo
 import qualified Cardano.Ledger.Alonzo.TxWitness as Alonzo
 import           Cardano.Ledger.Crypto (StandardCrypto)
-import           Cardano.Slotting.EpochInfo (EpochInfo)
+import           Cardano.Slotting.EpochInfo (EpochInfo, hoistEpochInfo)
 import           Cardano.Slotting.Time (SystemStart)
+import           Control.Monad.Trans.Except
 import qualified Ledger as Plutus
 import qualified Ledger.Typed.Scripts as Scripts
+import qualified Ouroboros.Consensus.HardFork.History as Consensus
 import           Ouroboros.Network.Protocol.LocalStateQuery.Type (AcquireFailure)
 import qualified Plutus.V1.Ledger.DCert as Plutus
 import qualified PlutusTx
@@ -280,10 +280,21 @@ readCustomRedeemerFromTx fp (AnyConsensusModeParams cModeParams) network = do
     CardanoMode -> do
       let localNodeConnInfo = LocalNodeConnectInfo cModeParams network sockPath
 
-      (_chainTip, eQueryTipLocalState) <- liftIO $ queryQueryTip localNodeConnInfo Nothing
-      qTipLocalState <- firstExceptT AcquireFail $ hoistEither eQueryTipLocalState
-      let eInfo = epochInfo qTipLocalState
-      sStart <- hoistMaybe NoSystemStartTimeError $ mSystemStart qTipLocalState
+      eResult <-
+        liftIO $ executeLocalStateQueryExpr localNodeConnInfo Nothing
+          $ \ntcVersion -> do
+              (EraHistory _ interpreter) <- queryExpr $ QueryEraHistory CardanoModeIsMultiEra
+              mSystemStart <-
+                if ntcVersion Prelude.>= NodeToClientV_9
+                then Just Prelude.<$> queryExpr QuerySystemStart
+                else return Nothing
+              let eInfo = hoistEpochInfo (first TransactionValidityIntervalError . runExcept)
+                            $ Consensus.interpreterToEpochInfo interpreter
+              return (eInfo, mSystemStart)
+
+      (eInfo, mSystemStart) <- firstExceptT AcquireFail $ hoistEither eResult
+
+      sStart <- hoistMaybe NoSystemStartTimeError mSystemStart
 
       -- Query UTxO
       let utxoQ = QueryInShelleyBasedEra sbe (QueryUTxO QueryUTxOWhole)

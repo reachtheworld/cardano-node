@@ -70,6 +70,7 @@ library
                       , cardano-slotting
                       , containers
                       , filepath
+                      , ouroboros-consensus
                       , ouroboros-network
                       , plutus-ledger
                       , plutus-ledger-api
