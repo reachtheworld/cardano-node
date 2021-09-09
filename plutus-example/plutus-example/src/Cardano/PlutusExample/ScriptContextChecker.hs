@@ -56,13 +56,15 @@ import           PlutusTx.Prelude hiding (Semigroup (..), unless)
 import qualified PlutusTx.Prelude as P
 import qualified Shelley.Spec.Ledger.TxBody as Shelley
 
-newtype MyCustomDatum = MyCustomDatum Integer
+-- Description
+-- MyCustomRedeemer mimics the ScriptContext. MyCustomRedeemer is built via reading
+-- the transaction containing the script and the script itself just compares MyCustomRedeemer
+-- to the ScriptContext to be sure they are equivalent.
+-- The overall aim is to make sure what is provided via ScriptContext (i.e. the transaction)
+-- is what it's supposed to be. We check this by creating MyCustomRedeemer based on
+-- the actual transaction which is created via the create-script-context executable.
 
--- MyCustomRedeemer mimics the 'ScriptContext' in the Plutus validator.
--- Why? We construct a 'MyCustomRedeemer' from the transaction about
--- to be submitted. We then equivalence test various fields in the
--- Plutus script validator to be sure the correct values are being
--- passed to the Plutus script.
+newtype MyCustomDatum = MyCustomDatum Integer
 
 data MyCustomRedeemer
   = MyCustomRedeemer
