@@ -238,19 +238,13 @@ runQueryTip (AnyConsensusModeParams cModeParams) network mOutFile = do
 
             mSyncProgress <- hushM syncProgressResult $ \e -> do
               liftIO . T.hPutStrLn IO.stderr $ "Warning: Sync progress unavailable: " <> renderShelleyQueryCmdError e
-            case mLocalState of
-              Nothing -> return $ Just $ O.QueryTipLocalStateOutput
-                           { O.mEra = Just (O.era localState)
-                           , O.mEpoch = Just epochNo
-                           , O.mSyncProgress = mSyncProgress
-                           , O.mSystemStartOut = Nothing
-                           }
-              Just mLState -> return $ Just $ O.QueryTipLocalStateOutput
-                                { O.mEra = Just (O.era localState)
-                                , O.mEpoch = Just epochNo
-                                , O.mSyncProgress = mSyncProgress
-                                , O.mSystemStartOut = O.mSystemStart mLState
-                                }
+
+            return $ Just $ O.QueryTipLocalStateOutput
+              { O.mEra = Just (O.era localState)
+              , O.mEpoch = Just epochNo
+              , O.mSyncProgress = mSyncProgress
+              }
+
 
       let jsonOutput = encodePretty $ O.QueryTipOutput
             { O.chainTip = chainTip

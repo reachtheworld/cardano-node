@@ -39,7 +39,6 @@ data QueryTipLocalStateOutput = QueryTipLocalStateOutput
   { mEra :: Maybe AnyCardanoEra
   , mEpoch :: Maybe EpochNo
   , mSyncProgress :: Maybe Text
-  , mSystemStartOut :: Maybe SystemStart
   }
 
 -- | A key-value pair difference list for encoding a JSON object.
@@ -63,7 +62,6 @@ instance ToJSON (QueryTipOutput QueryTipLocalStateOutput) where
         . ("era" ..=? (mLocalState a >>= mEra))
         . ("epoch" ..=? (mLocalState a >>= mEpoch))
         . ("syncProgress" ..=? (mLocalState a >>= mSyncProgress))
-        . ("systemStart" ..=? (mLocalState a >>= mSystemStartOut))
         ) []
   toEncoding a = case chainTip a of
     ChainTipAtGenesis -> JE.null_
