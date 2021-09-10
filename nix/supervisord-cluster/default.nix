@@ -25,7 +25,7 @@ let
   backend =
     rec
     { ## Generic Nix bits:
-      topologyForNode =
+      topologyForNodeSpec =
         { profile, nodeSpec }:
         let inherit (nodeSpec) name i; in
         workbench.runWorkbench

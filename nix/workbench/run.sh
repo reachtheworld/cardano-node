@@ -299,7 +299,7 @@ EOF
 
         local genesis_args=(
             ## Positionals:
-            "$cacheDir"/gene            "$dir"/profile.json
+            "$cacheDir"/genesis "$dir"/profile.json
             "$dir"/topology
             "$dir"/genesis
         )

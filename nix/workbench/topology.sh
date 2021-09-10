@@ -145,20 +145,11 @@ case "${op}" in
             loopback_node_topology_from_nixops_topology($topology[0]; $i)
             ' "${args[@]}";;
         local-proxy )
-            args=(--argjson   basePort $basePort
-                  --null-input
-                 )
-            jq '
-            def proxy_topology:
-              { Producers:
-                 [{ addr:    "relays-new.cardano-mainnet.iohk.io"
-                  , port:    3001
-                  , valency: 1
-                  }]
-              };
+            local   name=$(jq '.name'   <<<$prof --raw-output)
+            local preset=$(jq '.preset' <<<$prof --raw-output)
+            local topo_proxy=$(profile preset-get-file "$preset" 'proxy topology' 'topology-proxy.json')
 
-            proxy_topology
-            ' "${args[@]}";;
+            jq . "$topo_proxy";;
         local-observer )
             args=(--slurpfile topology "$topo_dir"/topology-nixops.json
                   --argjson   basePort $basePort

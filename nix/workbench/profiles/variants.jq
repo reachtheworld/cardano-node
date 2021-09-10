@@ -43,8 +43,10 @@ def genesis_profile_variants:
     , generator: { tps: 256 } }
 
 
-  ## Proxy:
-  , { composition:
+  ## Chainsync:
+  , { name:   "chainsync"
+    , preset: "mainnet"
+    , composition:
       { locations:                      ["LO"]
       , n_bft_hosts:                    0
       , n_singular_hosts:               0
