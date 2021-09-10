@@ -107,6 +107,7 @@ $CARDANO_CLI transaction build \
   --script-invalid \
   --change-address "$utxoaddr" \
   --certificate-file "example/addresses/user1-stake.reg.cert" \
+  --invalid-before 5 \
   --tx-in "$plutusutxotxin" \
   --tx-in-collateral "$txinCollateral" \
   --tx-out "$dummyaddress+10000000" \
