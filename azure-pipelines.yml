@@ -9,15 +9,25 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
+resources:
+  repositories:
+  - repository: cardano-node
+    type: github
+    name: reachtheworld/cardano-node
+    ref: tags/1.27.0
+    endpoint: raycrawfordGitHubServiceConnection
+
 steps:
+#- checkout: libsodium
+#  path: libsodium
 - task: UniversalPackages@0
   displayName: 'Download libsodium artifact'
   inputs:
     command: download
+    downloadDirectory: '$(Build.SourcesDirectory)'
     vstsFeed: 'cardano-stake/libsodium'
     vstsFeedPackage: 'libsodium'
-#    vstsPackageVersion: '<packageVersion>'
-    downloadDirectory: '$(Build.SourcesDirectory)'
+    vstsPackageVersion: '*'
 
 - script: |
     sudo tar xvf $(Build.SourcesDirectory)/libsodium.tar -C /
