@@ -1,0 +1,26 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- master
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- task: UniversalPackages@0
+  displayName: 'Download libsodium artifact'
+  inputs:
+    command: download
+    vstsFeed: 'cardano-stake/libsodium'
+    vstsFeedPackage: 'libsodium'
+#    vstsPackageVersion: '<packageVersion>'
+    downloadDirectory: '$(Build.SourcesDirectory)'
+
+- script: |
+    sudo tar xvf $(Build.SourcesDirectory)/libsodium.tar -C /
+    ls -alF /usr/local/lib/
+    ls -alF /usr/local/lib/pkgconfig/
+  displayName: 'test'
