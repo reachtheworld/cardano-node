@@ -18,8 +18,8 @@ resources:
     ref: refs/tags/1.29.0
 
 steps:
-#- checkout: libsodium
-#  path: libsodium
+#- checkout: cardano-node
+#  path: cardano-node
 - task: UniversalPackages@0
   displayName: 'Download libsodium artifact'
   inputs:
@@ -31,6 +31,18 @@ steps:
 
 - script: |
     sudo tar xvf $(Build.SourcesDirectory)/libsodium.tar -C /
+    find /usr/local/lib -type f -exec chmod 644 {} \;
     ls -alF /usr/local/lib/
     ls -alF /usr/local/lib/pkgconfig/
-  displayName: 'test'
+    echo -n LD_LIBRARY_PATH = 
+    echo $LD_LIBRARY_PATH
+    export LD_LIBRARY_PATH="/usr/local/lib:$LD_LIBRARY_PATH"
+    export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH"
+  displayName: 'Install libsodium'
+
+- script: |
+    echo $LD_LIBRARY_PATH
+    ghc --version
+    cabal --version
+    sudo apt-get update -y
+    sudo apt-get install automake build-essential pkg-config libffi-dev libgmp-dev libssl-dev libtinfo-dev libsystemd-dev zlib1g-dev make g++ tmux git jq wget libncursesw5 libtool autoconf -y
