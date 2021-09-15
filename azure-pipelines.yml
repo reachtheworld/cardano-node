@@ -40,9 +40,12 @@ steps:
     echo $LD_LIBRARY_PATH
     export LD_LIBRARY_PATH="/usr/local/lib:$LD_LIBRARY_PATH"
     export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH"
+    echo -n LD_LIBRARY_PATH = 
+    echo $LD_LIBRARY_PATH
   displayName: 'Install libsodium'
 
 - script: |
+    echo -n LD_Library_path = 
     echo $LD_LIBRARY_PATH
     ghcup install ghc 8.10.4
     ghcup set ghc 8.10.4
