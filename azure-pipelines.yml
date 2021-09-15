@@ -34,19 +34,11 @@ steps:
     sudo tar xvf $(Build.SourcesDirectory)/libsodium.tar -C /
     sudo chmod 644 /usr/local/lib/libsodium*
     sudo chmod 644 /usr/local/lib/pkgconfig/libsodium*
-    ls -alF /usr/local/lib/
-    ls -alF /usr/local/lib/pkgconfig/
-    echo -n LD_LIBRARY_PATH = 
-    echo $LD_LIBRARY_PATH
-    export LD_LIBRARY_PATH="/usr/local/lib:$LD_LIBRARY_PATH"
-    export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH"
-    echo -n LD_LIBRARY_PATH = 
-    echo $LD_LIBRARY_PATH
   displayName: 'Install libsodium'
 
 - script: |
-    echo -n LD_Library_path = 
-    echo $LD_LIBRARY_PATH
+    export LD_LIBRARY_PATH="/usr/local/lib:$LD_LIBRARY_PATH"
+    export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH"
     ghcup install ghc 8.10.4
     ghcup set ghc 8.10.4
     ghcup --version
@@ -54,3 +46,17 @@ steps:
     cabal --version
     sudo apt-get update -y
     sudo apt-get install automake build-essential pkg-config libffi-dev libgmp-dev libssl-dev libtinfo-dev libsystemd-dev zlib1g-dev make g++ tmux git jq wget libncursesw5 libtool autoconf -y
+  displayName: 'Install build dependencies'
+
+- script: |
+    export LD_LIBRARY_PATH="/usr/local/lib:$LD_LIBRARY_PATH"
+    export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH"
+    cd $(Build.SourcesDirectory)/cardano-node
+    cabal configure --with-compiler=ghc-8.10.4
+    echo "package cardano-crypto-praos" >>  cabal.project.local
+    echo "  flags: -external-libsodium-vrf" >>  cabal.project.local
+    cabal build all
+    mkdir -p $(Build.ArtifactStagingDirectory)/.local/bin
+    cp -p "$(./scripts/bin-path.sh cardano-node)" $(Build.ArtifactStagingDirectory)/.local/bin/
+    cp -p "$(./scripts/bin-path.sh cardano-cli)" $(Build.ArtifactStagingDirectory)/.local/bin/
+    ls -alF $(Build.ArtifactStagingDirectory)/.local/bin/
