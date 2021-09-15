@@ -4,10 +4,8 @@
 ## The backend is an attrset of AWS/supervisord-specific methods and parameters.
 , backend
 
-## Environmental settings:
-##   - either affect semantics on all backends equally,
-##   - or have no semantic effect
-, environment
+## The cardano-node config used as baseline:
+, baseNodeConfig
 
 , profile
 }:
@@ -61,7 +59,7 @@ let
       base =
         ## General config bits needed for base workbench functionality.
         removeAttrs
-          environment.cardanoLib.environments.testnet.nodeConfig
+          baseNodeConfig
           [ "AlonzoGenesisHash"
             "ByronGenesisHash"
             "ShelleyGenesisHash"

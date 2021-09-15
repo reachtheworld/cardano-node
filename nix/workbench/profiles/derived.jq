@@ -132,7 +132,7 @@ def add_derived_params:
 ;
 
 def profile_pretty_describe($p):
-  [ "Profile: \($p.name)"
+  [ "profile: \($p.name)"
   , "  - era:                \($p.era)"
   , "  - epoch slots:        \($p.genesis.epoch_length)"
   , "  - slot duration:      \($p.genesis.slot_duration)"

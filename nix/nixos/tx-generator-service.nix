@@ -83,7 +83,7 @@ in pkgs.commonLib.defServiceModule
       exeName = "tx-generator";
 
       extraOptionDecls = {
-        scriptMode      = opt bool true      "Whether to use the modern script parametrisation mode of the generator.";
+        scriptMode      = opt bool false     "Whether to use the modern script parametrisation mode of the generator.";
         continuousMode  = opt bool false     "Whether to use continuous generation, without the full UTxO pre-splitting phase.";
 
         ## TODO: the defaults should be externalised to a file.

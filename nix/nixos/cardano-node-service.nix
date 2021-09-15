@@ -28,7 +28,8 @@ let
           (era: epoch:
             { "Test${era}HardForkAtEpoch" = epoch;
             })
-          cfg.forceHardForks));
+          (traceValSeqN 2
+          cfg.forceHardForks)));
     nodeConfigFile = if (cfg.nodeConfigFile != null) then cfg.nodeConfigFile
       else toFile "config-${toString cfg.nodeId}-${toString i}.json" (toJSON instanceConfig);
     realNodeConfigFile = nodeConfigFile;

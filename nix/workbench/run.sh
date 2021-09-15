@@ -245,7 +245,7 @@ case "$op" in
         then fatal "run fails sanity checks:  $tag at $dir"; fi
 
         cat <<EOF
-workbench:  run $tag params:
+workbench:  run $(with_color yellow $tag) params:
   - run dir:         $dir
   - profile JSON:    $dir/profile.json
   - node specs:      $dir/node-specs.json
