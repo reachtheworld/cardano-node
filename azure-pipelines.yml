@@ -15,7 +15,7 @@ resources:
     type: github
     endpoint: raycrawfordGitHubServiceConnection
     name: reachtheworld/cardano-node
-    ref: 'tags/1.29.0'
+    ref: refs/tags/1.29.0
 
 steps:
 #- checkout: libsodium
