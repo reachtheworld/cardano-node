@@ -14,7 +14,7 @@ resources:
   - repository: cardano-node
     type: github
     name: reachtheworld/cardano-node
-    ref: tags/1.27.0
+    ref: tree/1.27.0
     endpoint: raycrawfordGitHubServiceConnection
 
 steps:
