@@ -11,14 +11,14 @@ pool:
 
 resources:
   repositories:
-  - repository: cardano-node
+  - repository: cardano-node-src
     type: github
     endpoint: raycrawfordGitHubServiceConnection
     name: reachtheworld/cardano-node
     ref: refs/tags/1.29.0
 
 steps:
-- checkout: cardano-node
+- checkout: cardano-node-src
   path: cardano-node
 
 - task: UniversalPackages@0
@@ -32,7 +32,8 @@ steps:
 
 - script: |
     sudo tar xvf $(Build.SourcesDirectory)/libsodium.tar -C /
-    sudo find /usr/local/lib -name libsodium* -type f -exec chmod 644 {} \;
+    sudo chmod 644 /usr/local/lib/libsodium*
+    sudo chmod 644 /usr/local/lib/pkgconfig/libsodium*
     ls -alF /usr/local/lib/
     ls -alF /usr/local/lib/pkgconfig/
     echo -n LD_LIBRARY_PATH = 
@@ -43,6 +44,9 @@ steps:
 
 - script: |
     echo $LD_LIBRARY_PATH
+    ghcup install ghc 8.10.4
+    ghcup set ghc 8.10.4
+    ghcup --version
     ghc --version
     cabal --version
     sudo apt-get update -y
