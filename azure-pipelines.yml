@@ -18,8 +18,9 @@ resources:
     ref: refs/tags/1.29.0
 
 steps:
-#- checkout: cardano-node
-#  path: cardano-node
+- checkout: cardano-node
+  path: cardano-node
+
 - task: UniversalPackages@0
   displayName: 'Download libsodium artifact'
   inputs:
@@ -31,7 +32,7 @@ steps:
 
 - script: |
     sudo tar xvf $(Build.SourcesDirectory)/libsodium.tar -C /
-    find /usr/local/lib -type f -exec chmod 644 {} \;
+    sudo find /usr/local/lib -name libsodium* -type f -exec chmod 644 {} \;
     ls -alF /usr/local/lib/
     ls -alF /usr/local/lib/pkgconfig/
     echo -n LD_LIBRARY_PATH = 
